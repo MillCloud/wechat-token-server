@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Post } from '@nestjs/common';
 import { TokenService } from './token.service';
 
 @Controller('token')
@@ -25,7 +25,7 @@ export class TokenController {
     };
   }
 
-  @Get('refresh')
+  @Post('refresh')
   async refresh() {
     await this.tokenService.refresh();
     return {
