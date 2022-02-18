@@ -30,6 +30,7 @@ export class TokenController {
     await this.tokenService.refresh();
     return {
       code: 200,
+      accessToken: (await this.tokenService.get()).data.accessToken,
     };
   }
 }
