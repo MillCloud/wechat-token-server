@@ -12,20 +12,28 @@ export class TokenService {
     private readonly configService: ConfigService,
   ) {}
 
-  getAccessToken() {
+  private getAccessToken() {
     return this.accessToken;
   }
 
-  setAccessToken(accessToken: string, expiresIn: number) {
+  private setAccessToken(accessToken: string, expiresIn: number) {
     this.accessToken = {
       content: accessToken,
       expiredAt: new Date(new Date().getTime() + expiresIn * 1000),
     };
   }
 
-  async get() {
+  private deleteAccessToken() {
+    this.accessToken = null;
+  }
+
+  private hasValidAccessToken() {
     const accessToken = this.getAccessToken();
-    if (accessToken && +accessToken.expiredAt < new Date().getTime()) {
+    return accessToken && +accessToken.expiredAt < new Date().getTime();
+  }
+
+  async get() {
+    if (this.hasValidAccessToken()) {
       return {
         success: true,
         data: {
@@ -39,14 +47,13 @@ export class TokenService {
     if (!generateResult.success) {
       return generateResult;
     }
-    this.setAccessToken(
-      generateResult.data.accessToken,
-      generateResult.data.expiresIn,
-    );
+
+    const accessToken = generateResult.data.accessToken;
+    this.setAccessToken(accessToken, generateResult.data.expiresIn);
     return {
       success: true,
       data: {
-        accessToken: generateResult.data.accessToken,
+        accessToken,
       },
       message: '',
     };
@@ -93,7 +100,18 @@ export class TokenService {
     };
   }
 
-  refresh() {}
+  async refresh() {
+    this.deleteAccessToken();
+    await this.get();
+  }
+
+  async checkAndRefresh() {
+    const accessToken = await this.get();
+    if (!(await this.checkIfValid(accessToken.data.accessToken))) {
+      this.deleteAccessToken();
+      await this.get();
+    }
+  }
 
   async checkIfValid(accessToken: string) {
     const url =
