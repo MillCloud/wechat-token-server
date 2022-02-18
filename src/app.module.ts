@@ -6,10 +6,12 @@ import { AppService } from './app.service';
 import { TokenController } from './token/token.controller';
 import { TokenService } from './token/token.service';
 import loadConfig from './config/configurations';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     HttpModule,
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       load: [loadConfig],
       envFilePath: '.env',

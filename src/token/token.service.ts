@@ -2,15 +2,21 @@ import { firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Interval } from '@nestjs/schedule';
 
 @Injectable()
 export class TokenService {
+  private appId: string;
+  private appSecret: string;
   private accessToken: AccessTokenType;
 
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
-  ) {}
+  ) {
+    this.appId = this.configService.get<string>('appId');
+    this.appSecret = this.configService.get<string>('appSecret');
+  }
 
   private getAccessToken() {
     return this.accessToken;
@@ -64,8 +70,8 @@ export class TokenService {
    * @returns
    */
   async generate(): Promise<MethodResponse> {
-    const appId = this.configService.get<string>('appId');
-    const appSecret = this.configService.get<string>('appSecret');
+    const appId = this.appId;
+    const appSecret = this.appSecret;
     const url =
       'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=' +
       appId +
@@ -105,11 +111,14 @@ export class TokenService {
     await this.get();
   }
 
+  @Interval('token-check-interval', 3000)
   async checkAndRefresh() {
+    console.log(new Date().toISOString() + ': Checked and refreshed token');
     const accessToken = await this.get();
     if (!(await this.checkIfValid(accessToken.data.accessToken))) {
       this.deleteAccessToken();
       await this.get();
+      console.log(new Date().toISOString() + ': Token expired, refreshed');
     }
   }
 
