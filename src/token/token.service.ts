@@ -8,7 +8,7 @@ import { Interval } from '@nestjs/schedule';
 export class TokenService {
   private appId: string;
   private appSecret: string;
-  private accessToken: AccessTokenType;
+  private accessToken: AccessToken;
 
   constructor(
     private readonly httpService: HttpService,
@@ -69,7 +69,7 @@ export class TokenService {
    * Generate a new access token
    * @returns
    */
-  async generate(): Promise<MethodResponse> {
+  async generate(): Promise<MethodResult> {
     const appId = this.appId;
     const appSecret = this.appSecret;
     const url =
@@ -146,7 +146,7 @@ export type GetCallbackIpResponse = {
   errmsg?: string;
 };
 
-export type MethodResponse = {
+export type MethodResult = {
   success: boolean;
   data: {
     accessToken: string;
@@ -155,7 +155,7 @@ export type MethodResponse = {
   message: string;
 };
 
-export type AccessTokenType = {
+export type AccessToken = {
   content: string;
   expiredAt: Date;
 };
