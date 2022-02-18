@@ -3,13 +3,13 @@ import { TokenService } from './token.service';
 
 @Controller('token')
 export class TokenController {
-  constructor(private readonly tokenService: TokenService) { }
+  constructor(private readonly tokenService: TokenService) {}
 
   @Get()
-  getAccessToken() {
+  async getAccessToken() {
     return {
       code: 200,
-      accessToken: this.tokenService.get(),
+      accessToken: (await this.tokenService.get()).data.accessToken,
     };
   }
 }

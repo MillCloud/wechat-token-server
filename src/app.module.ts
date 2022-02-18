@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
@@ -8,6 +9,7 @@ import loadConfig from './config/configurations';
 
 @Module({
   imports: [
+    HttpModule,
     ConfigModule.forRoot({
       load: [loadConfig],
       envFilePath: '.env',

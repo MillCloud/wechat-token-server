@@ -1,8 +1,10 @@
 lockfileVersion: 5.3
 
 specifiers:
+  '@nestjs/axios': ^0.0.5
   '@nestjs/cli': ^8.0.0
   '@nestjs/common': ^8.0.0
+  '@nestjs/config': ^1.2.0
   '@nestjs/core': ^8.0.0
   '@nestjs/platform-express': ^8.0.0
   '@nestjs/schematics': ^8.0.0
@@ -28,9 +30,12 @@ specifiers:
   ts-node: ^10.0.0
   tsconfig-paths: ^3.10.1
   typescript: ^4.3.5
+  webpack: ^5.0.0
 
 dependencies:
+  '@nestjs/axios': registry.npmmirror.com/@nestjs/axios/0.0.5_9a0e39cada075cf8a453083f94ffa5a6
   '@nestjs/common': registry.npmmirror.com/@nestjs/common/8.3.1_0a8b9973a45cbeaad6b0063efdcaad84
+  '@nestjs/config': registry.npmmirror.com/@nestjs/config/1.2.0_9a0e39cada075cf8a453083f94ffa5a6
   '@nestjs/core': registry.npmmirror.com/@nestjs/core/8.3.1_3ee156419336b921cef6d2ae294e6e72
   '@nestjs/platform-express': registry.npmmirror.com/@nestjs/platform-express/8.3.1_dc024985ab89eb73339eca509fad8031
   reflect-metadata: registry.npmmirror.com/reflect-metadata/0.1.13
@@ -55,10 +60,11 @@ devDependencies:
   source-map-support: registry.npmmirror.com/source-map-support/0.5.21
   supertest: registry.npmmirror.com/supertest/6.2.2
   ts-jest: registry.npmmirror.com/ts-jest/27.1.3_1e2406a8ca2ae3dc934d01f9ee2aebbb
-  ts-loader: registry.npmmirror.com/ts-loader/9.2.6_typescript@4.5.5
+  ts-loader: registry.npmmirror.com/ts-loader/9.2.6_typescript@4.5.5+webpack@5.66.0
   ts-node: registry.npmmirror.com/ts-node/10.5.0_ad16171857a0edcfc445c7bfcf336eb6
   tsconfig-paths: registry.npmmirror.com/tsconfig-paths/3.12.0
   typescript: registry.npmmirror.com/typescript/4.5.5
+  webpack: registry.npmmirror.com/webpack/5.66.0
 
 packages:
 
@@ -916,6 +922,24 @@ packages:
       '@jridgewell/sourcemap-codec': registry.npmmirror.com/@jridgewell/sourcemap-codec/1.4.11
     dev: true
 
+  registry.npmmirror.com/@nestjs/axios/0.0.5_9a0e39cada075cf8a453083f94ffa5a6:
+    resolution: {integrity: sha512-kpgCX6JAXcntj+4fk5Sk7Nu6HXvyOKyhRgnuaIQpwbcdthrPfOBVmJo+ZJf2bbSze+YaoodeH9Fe1WkSiN1xrg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@nestjs/axios/-/axios-0.0.5.tgz}
+    id: registry.npmmirror.com/@nestjs/axios/0.0.5
+    name: '@nestjs/axios'
+    version: 0.0.5
+    peerDependencies:
+      '@nestjs/common': ^7.0.0 || ^8.0.0
+      reflect-metadata: ^0.1.12
+      rxjs: ^6.0.0 || ^7.0.0
+    dependencies:
+      '@nestjs/common': registry.npmmirror.com/@nestjs/common/8.3.1_0a8b9973a45cbeaad6b0063efdcaad84
+      axios: registry.npmmirror.com/axios/0.25.0
+      reflect-metadata: registry.npmmirror.com/reflect-metadata/0.1.13
+      rxjs: registry.npmmirror.com/rxjs/7.5.4
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
   registry.npmmirror.com/@nestjs/cli/8.2.1_eslint@8.9.0:
     resolution: {integrity: sha512-GnwpORSIkGl6N6yWPONq1wwZ8+zltr3vF1M/2qzupDnXOAvSSCh1otDQRAmeOf3uIIeCiCsJEEx79kRnT7Zdrw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@nestjs/cli/-/cli-8.2.1.tgz}
     id: registry.npmmirror.com/@nestjs/cli/8.2.1
@@ -982,6 +1006,25 @@ packages:
       uuid: registry.npmmirror.com/uuid/8.3.2
     transitivePeerDependencies:
       - debug
+    dev: false
+
+  registry.npmmirror.com/@nestjs/config/1.2.0_9a0e39cada075cf8a453083f94ffa5a6:
+    resolution: {integrity: sha512-GGZOj2g6EMZ23orsQqeD2Vs5E2ZrmAiB0qCGvERv+5nQmZjY4nKkisG4awQsym1uotmmzgtsd9lOiKqTIFONhA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@nestjs/config/-/config-1.2.0.tgz}
+    id: registry.npmmirror.com/@nestjs/config/1.2.0
+    name: '@nestjs/config'
+    version: 1.2.0
+    peerDependencies:
+      '@nestjs/common': ^7.0.0 || ^8.0.0
+      reflect-metadata: ^0.1.13
+      rxjs: ^6.0.0 || ^7.2.0
+    dependencies:
+      '@nestjs/common': registry.npmmirror.com/@nestjs/common/8.3.1_0a8b9973a45cbeaad6b0063efdcaad84
+      dotenv: registry.npmmirror.com/dotenv/16.0.0
+      dotenv-expand: registry.npmmirror.com/dotenv-expand/8.0.1
+      lodash: registry.npmmirror.com/lodash/4.17.21
+      reflect-metadata: registry.npmmirror.com/reflect-metadata/0.1.13
+      rxjs: registry.npmmirror.com/rxjs/7.5.4
+      uuid: registry.npmmirror.com/uuid/8.3.2
     dev: false
 
   registry.npmmirror.com/@nestjs/core/8.3.1_3ee156419336b921cef6d2ae294e6e72:
@@ -1965,6 +2008,16 @@ packages:
     engines: {node: '>= 4.0.0'}
     dev: true
 
+  registry.npmmirror.com/axios/0.25.0:
+    resolution: {integrity: sha512-cD8FOb0tRH3uuEe6+evtAbgJtfxr7ly3fQjYcMcuPlgkwVS9xboaVIpcDV+cYQe+yGykgwZCs1pzjntcGa6l5g==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/axios/-/axios-0.25.0.tgz}
+    name: axios
+    version: 0.25.0
+    dependencies:
+      follow-redirects: registry.npmmirror.com/follow-redirects/1.14.8
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
   registry.npmmirror.com/axios/0.26.0:
     resolution: {integrity: sha512-lKoGLMYtHvFrPVt3r+RBMp9nh34N0M8zEfCWqdWZx6phynIEhQqAdydpyBAAG211zlhX9Rgu08cOamy6XjE5Og==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/axios/-/axios-0.26.0.tgz}
     name: axios
@@ -2720,6 +2773,20 @@ packages:
     dependencies:
       webidl-conversions: registry.npmmirror.com/webidl-conversions/5.0.0
     dev: true
+
+  registry.npmmirror.com/dotenv-expand/8.0.1:
+    resolution: {integrity: sha512-j/Ih7bIERDR5PzI89Zu8ayd3tXZ6E3dbY0ljQ9Db0K87qBO8zdLsi2dIvDHMWtjC3Yxb8XixOTHAtia0fDHRpg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/dotenv-expand/-/dotenv-expand-8.0.1.tgz}
+    name: dotenv-expand
+    version: 8.0.1
+    engines: {node: '>=12'}
+    dev: false
+
+  registry.npmmirror.com/dotenv/16.0.0:
+    resolution: {integrity: sha512-qD9WU0MPM4SWLPJy/r2Be+2WgQj8plChsyrCNQzW/0WjvcJQiKQJ9mH3ZgB3fxbUUxgc/11ZJ0Fi5KiimWGz2Q==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/dotenv/-/dotenv-16.0.0.tgz}
+    name: dotenv
+    version: 16.0.0
+    engines: {node: '>=12'}
+    dev: false
 
   registry.npmmirror.com/ee-first/1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/ee-first/-/ee-first-1.1.1.tgz}
@@ -4674,7 +4741,6 @@ packages:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/lodash/-/lodash-4.17.21.tgz}
     name: lodash
     version: 4.17.21
-    dev: true
 
   registry.npmmirror.com/log-symbols/4.1.0:
     resolution: {integrity: sha512-8XPvpAA8uyhfteu8pIvQxpJZ7SYYdpUivZpGy6sFsBuKRY/7rQGavedeB8aK+Zkyq6upMFVL/9AW6vOYzfRyLg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/log-symbols/-/log-symbols-4.1.0.tgz}
@@ -6150,7 +6216,7 @@ packages:
       yargs-parser: registry.npmmirror.com/yargs-parser/20.2.9
     dev: true
 
-  registry.npmmirror.com/ts-loader/9.2.6_typescript@4.5.5:
+  registry.npmmirror.com/ts-loader/9.2.6_typescript@4.5.5+webpack@5.66.0:
     resolution: {integrity: sha512-QMTC4UFzHmu9wU2VHZEmWWE9cUajjfcdcws+Gh7FhiO+Dy0RnR1bNz0YCHqhI0yRowCE9arVnNxYHqELOy9Hjw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/ts-loader/-/ts-loader-9.2.6.tgz}
     id: registry.npmmirror.com/ts-loader/9.2.6
     name: ts-loader
@@ -6165,6 +6231,7 @@ packages:
       micromatch: registry.npmmirror.com/micromatch/4.0.4
       semver: registry.npmmirror.com/semver/7.3.5
       typescript: registry.npmmirror.com/typescript/4.5.5
+      webpack: registry.npmmirror.com/webpack/5.66.0
     dev: true
 
   registry.npmmirror.com/ts-node/10.5.0_ad16171857a0edcfc445c7bfcf336eb6:
