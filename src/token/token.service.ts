@@ -95,12 +95,26 @@ export class TokenService {
 
   refresh() {}
 
-  checkIfValid() {}
+  async checkIfValid(accessToken: string) {
+    const url =
+      'https://api.weixin.qq.com/cgi-bin/getcallbackip?access_token=' +
+      accessToken;
+    const response = await firstValueFrom(
+      this.httpService.get<GetCallbackIpResponse>(url),
+    );
+    return response?.data?.ip_list?.length > 0;
+  }
 }
 
 export type GetAccessTokenResponse = {
   access_token: string;
   expires_in: number;
+  errcode?: number;
+  errmsg?: string;
+};
+
+export type GetCallbackIpResponse = {
+  ip_list: string[];
   errcode?: number;
   errmsg?: string;
 };
