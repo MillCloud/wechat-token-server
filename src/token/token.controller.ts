@@ -7,9 +7,16 @@ export class TokenController {
 
   @Get()
   async get() {
+    const accessToken = await this.tokenService.get();
+    if (accessToken.success) {
+      return {
+        code: 200,
+        accessToken: (await this.tokenService.get()).data.accessToken,
+      };
+    }
     return {
-      code: 200,
-      accessToken: (await this.tokenService.get()).data.accessToken,
+      code: 100,
+      message: accessToken.message,
     };
   }
 
