@@ -90,9 +90,9 @@ export class TokenService {
           expiresIn: 0,
         },
         message:
-          response?.data?.errcode.toString() ??
-          '' + ' ' + response?.data?.errmsg ??
-          '',
+          (response?.data?.errcode.toString() ?? '') +
+          ': ' +
+          (response?.data?.errmsg ?? ''),
       };
     }
 
@@ -113,7 +113,7 @@ export class TokenService {
 
   @Interval('token-check-interval', 3000)
   async checkAndRefresh() {
-    console.log(new Date().toISOString() + ': Checked and refreshed token');
+    console.log(new Date().toISOString() + ': Checking access_token');
     const accessToken = await this.get();
     if (!(await this.checkIfValid(accessToken.data.accessToken))) {
       this.deleteAccessToken();
