@@ -1,11 +1,13 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { TokenService } from './token.service';
+import { TokenGuard } from './token.guard';
 
 @Controller('token')
 export class TokenController {
-  constructor(private readonly tokenService: TokenService) {}
+  constructor(private readonly tokenService: TokenService) { }
 
   @Get()
+  @UseGuards(TokenGuard)
   async get() {
     const accessToken = await this.tokenService.get();
     if (accessToken.success) {
