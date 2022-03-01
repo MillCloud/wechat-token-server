@@ -7,6 +7,7 @@ import { TokenController } from './token/token.controller';
 import { TokenService } from './token/token.service';
 import loadConfig from './config/configurations';
 import { ScheduleModule } from '@nestjs/schedule';
+import { RedisModule } from '@nestjs-modules/ioredis';
 
 @Module({
   imports: [
@@ -15,6 +16,12 @@ import { ScheduleModule } from '@nestjs/schedule';
     ConfigModule.forRoot({
       load: [loadConfig],
       envFilePath: '.env',
+    }),
+    RedisModule.forRoot({
+      config: {
+        host: 'localhost',
+        port: 6379,
+      },
     }),
   ],
   controllers: [AppController, TokenController],

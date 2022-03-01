@@ -24,7 +24,7 @@ export class TokenController {
   async valid() {
     return {
       code: 200,
-      accessToken: await this.tokenService.checkIfValid(
+      valid: await this.tokenService.checkIfValid(
         (
           await this.tokenService.get()
         ).data.accessToken,

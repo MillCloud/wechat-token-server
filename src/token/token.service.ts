@@ -3,47 +3,50 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Interval } from '@nestjs/schedule';
+import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 
 @Injectable()
 export class TokenService {
   private appId: string;
   private appSecret: string;
-  private accessToken: AccessToken;
+  private accessTokenKey = 'access_token';
 
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
+    @InjectRedis() private readonly redis: Redis,
   ) {
     this.appId = this.configService.get<string>('appId');
     this.appSecret = this.configService.get<string>('appSecret');
   }
 
-  private getAccessToken() {
-    return this.accessToken;
+  private async getAccessToken() {
+    return await this.redis.get(this.accessTokenKey);
   }
 
-  private setAccessToken(accessToken: string, expiresIn: number) {
-    this.accessToken = {
-      content: accessToken,
-      expiredAt: new Date(new Date().getTime() + expiresIn * 1000),
-    };
+  private async setAccessToken(accessToken: string, expiresIn: number) {
+    await this.redis.set(
+      this.accessTokenKey,
+      accessToken,
+      'EX',
+      expiresIn - 60,
+    );
   }
 
-  private deleteAccessToken() {
-    this.accessToken = null;
+  private async deleteAccessToken() {
+    await this.redis.del(this.accessTokenKey);
   }
 
-  private hasValidAccessToken() {
-    const accessToken = this.getAccessToken();
-    return accessToken && +accessToken.expiredAt < new Date().getTime();
+  private async hasValidAccessToken() {
+    return await this.redis.exists(this.accessTokenKey);
   }
 
   async get() {
-    if (this.hasValidAccessToken()) {
+    if (await this.hasValidAccessToken()) {
       return {
         success: true,
         data: {
-          accessToken: this.getAccessToken().content,
+          accessToken: await this.getAccessToken(),
         },
         message: '',
       };
@@ -55,7 +58,7 @@ export class TokenService {
     }
 
     const accessToken = generateResult.data.accessToken;
-    this.setAccessToken(accessToken, generateResult.data.expiresIn);
+    await this.setAccessToken(accessToken, generateResult.data.expiresIn);
     return {
       success: true,
       data: {
@@ -107,18 +110,18 @@ export class TokenService {
   }
 
   async refresh() {
-    this.deleteAccessToken();
+    await this.deleteAccessToken();
     await this.get();
   }
 
-  @Interval('token-check-interval', 3000)
+  @Interval('token-check-interval', 5000)
   async checkAndRefresh() {
     console.log(new Date().toISOString() + ': Checking access_token');
     const accessToken = await this.get();
     if (!(await this.checkIfValid(accessToken.data.accessToken))) {
-      this.deleteAccessToken();
+      await this.deleteAccessToken();
       await this.get();
-      console.log(new Date().toISOString() + ': Token expired, refreshed');
+      console.log(new Date().toISOString() + ': Token invalid, refreshed');
     }
   }
 
