@@ -10,25 +10,32 @@ export class TokenController {
     const accessToken = await this.tokenService.get();
     if (accessToken.success) {
       return {
-        code: 200,
-        accessToken: (await this.tokenService.get()).data.accessToken,
+        code: 0,
+        message: 'OK',
+        data: {
+          accessToken: (await this.tokenService.get()).data.accessToken,
+        },
       };
     }
     return {
       code: 100,
       message: accessToken.message,
+      data: null,
     };
   }
 
   @Get('check')
-  async valid() {
+  async check() {
+    const accessToken = await this.tokenService.get();
+    const isValid = await this.tokenService.checkIfValid(
+      accessToken.data.accessToken,
+    );
     return {
-      code: 200,
-      valid: await this.tokenService.checkIfValid(
-        (
-          await this.tokenService.get()
-        ).data.accessToken,
-      ),
+      code: 0,
+      message: 'OK',
+      data: {
+        isValid: isValid,
+      },
     };
   }
 
@@ -36,8 +43,9 @@ export class TokenController {
   async refresh() {
     await this.tokenService.refresh();
     return {
-      code: 200,
-      accessToken: (await this.tokenService.get()).data.accessToken,
+      code: 0,
+      message: 'OK',
+      data: null,
     };
   }
 }
