@@ -2,11 +2,10 @@ const loadConfig = () => {
   const { env } = process;
 
   return {
-    miniPrograms: JSON.parse(env.MINI_PROGRAMS),
-    appId: env.APP_ID,
-    appSecret: env.APP_SECRET,
+    apps: JSON.parse(env.APPS),
     tokenSalt: env.TOKEN_SALT,
     hashCount: env.HASH_COUNT,
+    tokenKeyPrefix: env.TOKEN_KEY_PREFIX,
     redis: {
       host: env.REDIS_HOST,
       port: parseInt(env.REDIS_PORT) || 6379,

@@ -7,58 +7,73 @@ import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 
 @Injectable()
 export class TokenService {
-  private appId: string;
-  private appSecret: string;
-  private accessTokenKey = 'access_token';
+  private apps: Apps;
+  private appMap = new Map<string, string>();
+  private tokenKeyPrefix: string;
 
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
     @InjectRedis() private readonly redis: Redis,
   ) {
-    this.appId = this.configService.get<string>('appId');
-    this.appSecret = this.configService.get<string>('appSecret');
+    this.tokenKeyPrefix = this.configService.get('tokenKeyPrefix');
+    this.apps = this.configService.get<Apps>('apps');
+    this.apps.forEach((app) => {
+      this.appMap.set(app.id, app.secret);
+    });
   }
 
-  private async getAccessToken() {
-    return await this.redis.get(this.accessTokenKey);
+  private async getAccessToken(appId: string) {
+    return await this.redis.get(this.getAccessTokenKey(appId));
   }
 
-  private async setAccessToken(accessToken: string, expiresIn: number) {
+  private getAccessTokenKey(appId: string) {
+    return this.tokenKeyPrefix + appId;
+  }
+
+  private async setAccessToken(
+    appId: string,
+    accessToken: string,
+    expiresIn: number,
+  ) {
     await this.redis.set(
-      this.accessTokenKey,
+      this.getAccessTokenKey(appId),
       accessToken,
       'EX',
       expiresIn - 60,
     );
   }
 
-  private async deleteAccessToken() {
-    await this.redis.del(this.accessTokenKey);
+  private async deleteAccessToken(appId: string) {
+    await this.redis.del(this.getAccessTokenKey(appId));
   }
 
-  private async hasValidAccessToken() {
-    return await this.redis.exists(this.accessTokenKey);
+  private async hasValidAccessToken(appId: string) {
+    return await this.redis.exists(this.getAccessTokenKey(appId));
   }
 
-  async get() {
-    if (await this.hasValidAccessToken()) {
+  async get(appId: string) {
+    if (await this.hasValidAccessToken(appId)) {
       return {
         success: true,
         data: {
-          accessToken: await this.getAccessToken(),
+          accessToken: await this.getAccessToken(appId),
         },
         message: '',
       };
     }
 
-    const generateResult = await this.generate();
+    const generateResult = await this.generate(appId);
     if (!generateResult.success) {
       return generateResult;
     }
 
     const accessToken = generateResult.data.accessToken;
-    await this.setAccessToken(accessToken, generateResult.data.expiresIn);
+    await this.setAccessToken(
+      appId,
+      accessToken,
+      generateResult.data.expiresIn,
+    );
     return {
       success: true,
       data: {
@@ -72,9 +87,8 @@ export class TokenService {
    * Generate a new access token
    * @returns
    */
-  async generate(): Promise<MethodResult> {
-    const appId = this.appId;
-    const appSecret = this.appSecret;
+  async generate(appId: string): Promise<MethodResult> {
+    const appSecret = this.appMap.get(appId);
     const url =
       'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=' +
       appId +
@@ -109,19 +123,28 @@ export class TokenService {
     };
   }
 
-  async refresh() {
-    await this.deleteAccessToken();
-    await this.get();
+  async refresh(appId: string) {
+    await this.deleteAccessToken(appId);
+    await this.get(appId);
   }
 
-  @Interval('token-check-interval', 5000)
+  @Interval('token-check-interval', 3000)
   async checkAndRefresh() {
     console.log(new Date().toISOString() + ': Checking access_token');
-    const accessToken = await this.get();
-    if (!(await this.checkIfValid(accessToken.data.accessToken))) {
-      await this.deleteAccessToken();
-      await this.get();
-      console.log(new Date().toISOString() + ': Token invalid, refreshed');
+
+    for (let i = 0; i < this.apps.length; i++) {
+      const app = this.apps[i];
+      const appId = app.id;
+      const accessToken = await this.get(appId);
+      if (!(await this.checkIfValid(accessToken.data.accessToken))) {
+        await this.deleteAccessToken(appId);
+        await this.get(appId);
+        console.log(
+          new Date().toISOString() +
+            ': Token invalid, refreshed, appId: ' +
+            appId,
+        );
+      }
     }
   }
 
@@ -162,3 +185,8 @@ export type AccessToken = {
   content: string;
   expiredAt: Date;
 };
+
+export type Apps = {
+  id: string;
+  secret: string;
+}[];

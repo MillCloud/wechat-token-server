@@ -1,21 +1,21 @@
-import { Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { TokenService } from './token.service';
 import { TokenGuard } from './token.guard';
 
 @Controller('token')
 export class TokenController {
-  constructor(private readonly tokenService: TokenService) { }
+  constructor(private readonly tokenService: TokenService) {}
 
   @Get()
   @UseGuards(TokenGuard)
-  async get() {
-    const accessToken = await this.tokenService.get();
+  async get(@Query('appId') appId: string) {
+    const accessToken = await this.tokenService.get(appId);
     if (accessToken.success) {
       return {
         code: 0,
         message: 'OK',
         data: {
-          accessToken: (await this.tokenService.get()).data.accessToken,
+          accessToken: (await this.tokenService.get(appId)).data.accessToken,
         },
       };
     }
@@ -27,8 +27,8 @@ export class TokenController {
   }
 
   @Get('check')
-  async check() {
-    const accessToken = await this.tokenService.get();
+  async check(@Query('appId') appId: string) {
+    const accessToken = await this.tokenService.get(appId);
     const isValid = await this.tokenService.checkIfValid(
       accessToken.data.accessToken,
     );
@@ -42,8 +42,8 @@ export class TokenController {
   }
 
   @Post('refresh')
-  async refresh() {
-    await this.tokenService.refresh();
+  async refresh(@Query('appId') appId: string) {
+    await this.tokenService.refresh(appId);
     return {
       code: 0,
       message: 'OK',
