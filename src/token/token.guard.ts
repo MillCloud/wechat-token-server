@@ -5,7 +5,7 @@ import { createHash } from 'crypto';
 
 @Injectable()
 export class TokenGuard implements CanActivate {
-  constructor(private readonly configService: ConfigService) { }
+  constructor(private readonly configService: ConfigService) {}
 
   canActivate(
     context: ExecutionContext,
