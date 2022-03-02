@@ -3,9 +3,9 @@ const loadConfig = () => {
 
   return {
     apps: JSON.parse(env.APPS),
-    tokenSalt: env.TOKEN_SALT,
-    hashCount: env.HASH_COUNT,
     tokenKeyPrefix: env.TOKEN_KEY_PREFIX,
+    signSalt: env.SIGN_SALT,
+    signHashCount: env.SIGN_HASH_COUNT,
     redis: {
       host: env.REDIS_HOST,
       port: parseInt(env.REDIS_PORT) || 6379,

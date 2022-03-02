@@ -5,12 +5,7 @@ import { createHash } from 'crypto';
 
 @Injectable()
 export class TokenGuard implements CanActivate {
-  private salt: string;
-  private hashCount: number;
-  constructor(private readonly configService: ConfigService) {
-    this.salt = this.configService.get<string>('TOKEN_SALT');
-    this.hashCount = this.configService.get<number>('TOKEN_HASH_COUNT');
-  }
+  constructor(private readonly configService: ConfigService) { }
 
   canActivate(
     context: ExecutionContext,
@@ -20,21 +15,34 @@ export class TokenGuard implements CanActivate {
     if (!appId) {
       return false;
     }
+
     const timestamp = request.query.timestamp;
     if (!timestamp) {
       return false;
     }
+
     if (Math.abs(Date.now() - timestamp) > 60 * 1000) {
       return false;
     }
-    const token = request.headers.authorization;
-    if (!token) {
+
+    const sign = request.query.sign;
+    if (!sign) {
       return false;
     }
 
-    const realToken = this.multipleHash(appId + this.salt, this.hashCount);
-    console.log(realToken);
-    return token !== realToken;
+    const salt = this.configService.get<string>('signSalt');
+    const hashCount = this.configService.get<number>('signHashCount');
+    const realSign = this.generateSign(appId, timestamp, salt, hashCount);
+    return sign === realSign;
+  }
+
+  private generateSign(
+    appId: string,
+    timestamp: string,
+    salt: string,
+    hashCount: number,
+  ) {
+    return this.multipleHash(appId + timestamp + salt, hashCount);
   }
 
   private multipleHash(text: string, count: number) {
