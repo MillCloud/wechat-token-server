@@ -4,6 +4,8 @@
 
 微信 access_token 中控服务
 
+[官方文档：access_token 相关说明](https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/access-token/auth.getAccessToken.html)
+
 ## 安装
 
 ```bash
