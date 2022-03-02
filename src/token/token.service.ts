@@ -150,12 +150,12 @@ export class TokenService {
 
   async checkIfValid(accessToken: string) {
     const url =
-      'https://api.weixin.qq.com/cgi-bin/getcallbackip?access_token=' +
+      'https://api.weixin.qq.com/datacube/getweanalysisappiddailyretaininfo?access_token=' +
       accessToken;
     const response = await firstValueFrom(
-      this.httpService.get<GetCallbackIpResponse>(url),
+      this.httpService.post<GetValidResponse>(url),
     );
-    return response?.data?.ip_list?.length > 0;
+    return response?.data?.errcode !== 40001;
   }
 }
 
@@ -166,8 +166,7 @@ export type GetAccessTokenResponse = {
   errmsg?: string;
 };
 
-export type GetCallbackIpResponse = {
-  ip_list: string[];
+export type GetValidResponse = {
   errcode?: number;
   errmsg?: string;
 };
