@@ -130,6 +130,10 @@ export class TokenService {
 
   @Interval('token-check-interval', 3000)
   async checkAndRefresh() {
+    const isAutoRefresh = this.configService.get('tokenIsAutoRefresh');
+    if (!isAutoRefresh) {
+      return;
+    }
     console.log(new Date().toISOString() + ': Checking access_token');
 
     for (let i = 0; i < this.apps.length; i++) {
@@ -149,9 +153,8 @@ export class TokenService {
   }
 
   async checkIfValid(accessToken: string) {
-    const url =
-      'https://api.weixin.qq.com/datacube/getweanalysisappiddailyretaininfo?access_token=' +
-      accessToken;
+    const tokenCheckApi = this.configService.get('tokenCheckApi');
+    const url = `https://api.weixin.qq.com${tokenCheckApi}?access_token=${accessToken}`;
     const response = await firstValueFrom(
       this.httpService.post<GetValidResponse>(url),
     );
