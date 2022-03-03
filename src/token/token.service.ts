@@ -150,8 +150,8 @@ export class TokenService {
         await this.refresh(appId);
         console.log(
           new Date().toISOString() +
-          ': Token invalid, refreshed, appId: ' +
-          appId,
+            ': Token invalid, refreshed, appId: ' +
+            appId,
         );
       }
     }
