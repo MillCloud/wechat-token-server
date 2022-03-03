@@ -15,6 +15,8 @@ $ git@github.com:MillCloud/wechat-token-server.git
 $ cd wechat-token-server
 # 安装依赖
 $ npm install
+# 复制 .example.env 并重命名为 .env，并修改参数
+$ cp .example.env .env
 ```
 
 ## 运行
