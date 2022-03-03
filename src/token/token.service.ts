@@ -44,10 +44,6 @@ export class TokenService {
     );
   }
 
-  private async deleteAccessToken(appId: string) {
-    await this.redis.del(this.getAccessTokenKey(appId));
-  }
-
   private async hasValidAccessToken(appId: string) {
     return await this.redis.exists(this.getAccessTokenKey(appId));
   }
