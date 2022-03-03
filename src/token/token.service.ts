@@ -124,8 +124,17 @@ export class TokenService {
   }
 
   async refresh(appId: string) {
-    await this.deleteAccessToken(appId);
-    await this.get(appId);
+    const generateResult = await this.generate(appId);
+    if (!generateResult.success) {
+      return generateResult;
+    }
+
+    const accessToken = generateResult.data.accessToken;
+    await this.setAccessToken(
+      appId,
+      accessToken,
+      generateResult.data.expiresIn,
+    );
   }
 
   @Interval('token-check-interval', 3000)
@@ -134,6 +143,7 @@ export class TokenService {
     if (!isAutoRefresh) {
       return;
     }
+
     console.log(new Date().toISOString() + ': Checking access_token');
 
     for (let i = 0; i < this.apps.length; i++) {
@@ -141,12 +151,11 @@ export class TokenService {
       const appId = app.id;
       const accessToken = await this.get(appId);
       if (!(await this.checkIfValid(accessToken.data.accessToken))) {
-        await this.deleteAccessToken(appId);
-        await this.get(appId);
+        await this.refresh(appId);
         console.log(
           new Date().toISOString() +
-            ': Token invalid, refreshed, appId: ' +
-            appId,
+          ': Token invalid, refreshed, appId: ' +
+          appId,
         );
       }
     }
