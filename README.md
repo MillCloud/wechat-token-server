@@ -42,3 +42,52 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+
+## 使用
+
+### 接口验证参数（url）
+
+- appId：应用 ID
+- timestamp：时间戳（单位：毫秒）
+- sign：签名，生成规则：appId + timestamp + 随机字符串，然后用 md5（小写，32 位）加密 n 次
+
+### 获取 access_token
+
+`GET /token`
+
+query 参数：
+
+- appId：应用 ID
+
+返回值：
+
+```json
+{
+  "code": "<number，0 表示成功>",
+  "message": "<string>",
+  "data": {
+    "access_token": "<string>",
+  }
+}
+```
+
+### 刷新 access_token
+
+> 在 access_token 过期时，可以使用该接口刷新 access_token
+> 若在当前 access_token 有效期内进行刷新，则会生成新的，旧的 5 分钟内可用
+
+`POST /token/refresh`
+
+query 参数：
+
+- appId：应用 ID
+
+返回值：
+
+```json
+{
+  "code": "<number，0 表示成功>",
+  "message": "<string>",
+  "data": null
+}
+```
