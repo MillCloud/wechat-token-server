@@ -68,7 +68,7 @@ query 参数：
   "code": "<number，0 表示成功>",
   "message": "<string>",
   "data": {
-    "access_token": "<string>",
+    "accessToken": "<string>",
   }
 }
 ```
