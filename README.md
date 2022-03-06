@@ -34,10 +34,11 @@ $ npm run start:prod
 
 ## 部署
 
-使用 [pm2](https://pm2.keymetrics.io/)
+[pm2](https://pm2.keymetrics.io/)
 
 ```bash
-pm2 start npm --name wechat-token-server -- run start:prod
+# use pm2 to deploy
+$ pm2 start npm --name wechat-token-server -- run start:prod
 ```
 
 ## 测试（未做）
