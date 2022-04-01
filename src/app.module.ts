@@ -21,6 +21,7 @@ import { RedisModule } from '@nestjs-modules/ioredis';
       config: {
         host: loadConfig().redis.host,
         port: loadConfig().redis.port,
+        password: loadConfig().redis.password,
       },
     }),
   ],

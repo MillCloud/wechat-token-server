@@ -13,6 +13,7 @@ const loadConfig = () => {
     redis: {
       host: env.REDIS_HOST,
       port: parseInt(env.REDIS_PORT) || 6379,
+      password: env.REDIS_PASSWORD,
     },
   };
 };
