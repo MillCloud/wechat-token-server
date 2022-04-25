@@ -27,6 +27,7 @@ export class TokenController {
   }
 
   @Get('check')
+  @UseGuards(TokenGuard)
   async check(@Query('appId') appId: string) {
     const accessToken = await this.tokenService.get(appId);
     const isValid = await this.tokenService.checkIfValid(
@@ -42,6 +43,7 @@ export class TokenController {
   }
 
   @Post('refresh')
+  @UseGuards(TokenGuard)
   async refresh(@Query('appId') appId: string) {
     await this.tokenService.refresh(appId);
     return {
