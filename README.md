@@ -21,6 +21,8 @@ $ cp .example.env .env
 
 ## 运行
 
+> 默认运行在 3000 端口
+
 ```bash
 # development
 $ npm run start
