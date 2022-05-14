@@ -31,6 +31,7 @@ $ npm run start
 $ npm run start:dev
 
 # production mode
+$ npm run build
 $ npm run start:prod
 ```
 
@@ -40,6 +41,7 @@ $ npm run start:prod
 
 ```bash
 # use pm2 to deploy
+$ npm run build
 $ pm2 start npm --name wechat-token-server -- run start:prod
 ```
 
@@ -66,6 +68,8 @@ $ npm run test:cov
 
 ### 获取 access_token
 
+> 客户端本地无缓存 access_token 时，需要调用此接口获取
+
 `GET /token`
 
 query 参数：
@@ -80,13 +84,14 @@ query 参数：
   "message": "<string>",
   "data": {
     "accessToken": "<string>",
+    "expiresIn": "<number，有效时间，单位：秒，客户端保存的缓存过期时间应稍小于此字段（5～200）>"
   }
 }
 ```
 
 ### 刷新 access_token
 
-> 在 access_token 过期时，可以使用该接口刷新 access_token
+> 在 access_token 过期时，使用此接口刷新后重新获取
 > 若在当前 access_token 有效期内进行刷新，则会生成新的，旧的 5 分钟内可用
 
 `POST /token/refresh`
