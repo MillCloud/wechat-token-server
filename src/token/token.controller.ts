@@ -14,9 +14,7 @@ export class TokenController {
       return {
         code: 0,
         message: 'OK',
-        data: {
-          accessToken: (await this.tokenService.get(appId)).data.accessToken,
-        },
+        data: accessToken.data,
       };
     }
     return {

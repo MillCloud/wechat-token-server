@@ -24,7 +24,10 @@ export class TokenService {
   }
 
   private async getAccessToken(appId: string) {
-    return await this.redis.get(this.getAccessTokenKey(appId));
+    return {
+      accessToken: await this.redis.get(this.getAccessTokenKey(appId)),
+      expiresIn: (await this.redis.ttl(this.getAccessTokenKey(appId))) + 300,
+    };
   }
 
   private getAccessTokenKey(appId: string) {
@@ -40,7 +43,7 @@ export class TokenService {
       this.getAccessTokenKey(appId),
       accessToken,
       'EX',
-      expiresIn - 60,
+      expiresIn - 300,
     );
   }
 
@@ -52,9 +55,7 @@ export class TokenService {
     if (await this.hasValidAccessToken(appId)) {
       return {
         success: true,
-        data: {
-          accessToken: await this.getAccessToken(appId),
-        },
+        data: await this.getAccessToken(appId),
         message: '',
       };
     }
