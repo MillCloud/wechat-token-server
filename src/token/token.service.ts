@@ -71,13 +71,7 @@ export class TokenService {
       accessToken,
       generateResult.data.expiresIn,
     );
-    return {
-      success: true,
-      data: {
-        accessToken,
-      },
-      message: '',
-    };
+    return this.get(appId);
   }
 
   /**
@@ -151,8 +145,8 @@ export class TokenService {
         await this.refresh(appId);
         console.log(
           new Date().toISOString() +
-            ': Token invalid, refreshed, appId: ' +
-            appId,
+          ': Token invalid, refreshed, appId: ' +
+          appId,
         );
       }
     }
