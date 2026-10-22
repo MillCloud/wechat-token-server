@@ -43,7 +43,7 @@ $ npm run start:prod
 
 ```bash
 # .env 放在 docker-compose.yml 同级目录（参考 .example.env），通过只读挂载注入容器，不打入镜像
-$ docker-compose up -d --build
+$ docker-compose up -d
 ```
 
 更新代码时，需要删除旧容器和镜像重新运行上面这行命令。
