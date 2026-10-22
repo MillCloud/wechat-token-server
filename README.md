@@ -37,6 +37,19 @@ $ npm run start:prod
 
 ## 部署
 
+### Docker
+
+> 要求服务器已安装 Docker；`REDIS_HOST` 需填写容器内可访问的 Redis 地址（Redis 在宿主机时不能用 127.0.0.1）
+
+```bash
+# .env 放在 docker-compose.yml 同级目录（参考 .example.env），通过只读挂载注入容器，不打入镜像
+$ docker-compose up -d --build
+```
+
+更新代码时，需要删除旧容器和镜像重新运行上面这行命令。
+
+### pm2（旧部署方式）
+
 [pm2](https://pm2.keymetrics.io/)
 
 ```bash

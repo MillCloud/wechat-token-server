@@ -1,0 +1,10 @@
+services:
+  wechat-token-server:
+    build: .
+    image: wechat-token-server:0.0.1
+    container_name: wechat-token-server
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./.env:/app/.env:ro
+    restart: always
