@@ -1,6 +1,7 @@
 services:
   wechat-token-server:
     build: .
+    platform: linux/amd64
     image: wechat-token-server:0.0.1
     container_name: wechat-token-server
     ports:

@@ -48,6 +48,25 @@ $ docker-compose up -d --build
 
 更新代码时，需要删除旧容器和镜像重新运行上面这行命令。
 
+打包镜像传到服务器（tag 与 docker-compose.yml 中的 `image` 字段保持一致，发新版时同步修改）：
+
+```bash
+# 本地：构建镜像并导出
+$ version=0.0.1
+$ docker-compose build
+$ docker save wechat-token-server:$version | gzip > wechat-token-server-$version.tar.gz
+
+# 本地：上传到服务器
+$ scp wechat-token-server-$version.tar.gz user@your-server:/opt/wechat-token-server/
+
+# 服务器：导入镜像，放好 docker-compose.yml 和 .env 后启动
+$ cd /opt/wechat-token-server
+$ docker load < wechat-token-server-$version.tar.gz
+$ docker-compose up -d
+```
+
+> 服务器上先确认 `.env` 已放好再启动，否则挂载点会被自动创建成目录导致启动失败；服务器上不加 `--build`，`docker-compose up -d` 会直接使用已导入的镜像
+
 ### pm2（旧部署方式）
 
 [pm2](https://pm2.keymetrics.io/)

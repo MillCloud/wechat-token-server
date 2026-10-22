@@ -1,5 +1,5 @@
-# 构建阶段
-FROM node:22-alpine AS builder
+# 构建阶段（服务器为 amd64，固定平台避免本机 arm 架构镜像无法在服务器运行）
+FROM --platform=linux/amd64 node:22-alpine AS builder
 
 WORKDIR /app
 
@@ -10,7 +10,7 @@ COPY . .
 RUN npm run build
 
 # 运行阶段
-FROM node:22-alpine
+FROM --platform=linux/amd64 node:22-alpine
 
 WORKDIR /app
 
