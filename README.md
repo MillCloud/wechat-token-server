@@ -60,6 +60,7 @@ $ docker save wechat-token-server:$version | gzip > wechat-token-server-$version
 $ scp wechat-token-server-$version.tar.gz user@your-server:/opt/wechat-token-server/
 
 # 服务器：导入镜像，放好 docker-compose.yml 和 .env 后启动
+$ version=0.0.1
 $ cd /opt/wechat-token-server
 $ docker load < wechat-token-server-$version.tar.gz
 $ docker-compose up -d
