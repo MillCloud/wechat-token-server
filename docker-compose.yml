@@ -2,8 +2,10 @@ services:
   wechat-token-server:
     build: .
     platform: linux/amd64
-    image: wechat-token-server:0.0.1
+    image: wechat-token-server:${image_version:?请先设置 image_version（年月日时分-Git短提交号）}
     container_name: wechat-token-server
+    environment:
+      TZ: Asia/Shanghai
     ports:
       - '3000:3000'
     volumes:

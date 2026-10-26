@@ -10,7 +10,7 @@
 
 ```bash
 # clone 项目到本地
-$ git@github.com:MillCloud/wechat-token-server.git
+$ git clone git@github.com:MillCloud/wechat-token-server.git
 # 进入项目
 $ cd wechat-token-server
 # 安装依赖
@@ -41,32 +41,58 @@ $ npm run start:prod
 
 > 要求服务器已安装 Docker；`REDIS_HOST` 需填写容器内可访问的 Redis 地址（Redis 在宿主机时不能用 127.0.0.1）
 
+镜像版本使用北京时间的年月日时分加 Git 短提交号，例如 `wechat-token-server:202610261530-0123456`。构建前先提交所有改动，`git status --short` 应无输出，保证镜像内容对应提交号。版本在构建前生成一次，部署和回滚沿用发布包中的版本，不按服务器时间重新生成。
+
 ```bash
 # .env 放在 docker-compose.yml 同级目录（参考 .example.env），通过只读挂载注入容器，不打入镜像
-$ docker-compose up -d
+$ export image_version="$(TZ=Asia/Shanghai date +%Y%m%d%H%M)-$(git rev-parse --short=7 HEAD)"
+$ docker-compose up -d --build
 ```
 
-更新代码时，需要删除旧容器和镜像重新运行上面这行命令。
+`image_version` 必填，通过终端环境变量传入，不需要修改应用的 `.env`。后续 Compose 命令在同一终端执行；新开终端时先重新设置当前部署的版本。
 
-打包镜像传到服务器（tag 与 docker-compose.yml 中的 `image` 字段保持一致，发新版时同步修改）：
+容器通过 `TZ=Asia/Shanghai` 使用北京时间，镜像安装 `tzdata`。token 检查和刷新日志固定使用北京时间，并带 `+08:00` 标记。
+
+修改时区配置后，本地部署执行 `docker-compose up -d --build`；传镜像部署需重新构建、导出和导入镜像，并同步更新服务器上的 `docker-compose.yml`。
+
+启动后验证时区：`date` 应显示 `+0800`，Node 输出的时区应为 `Asia/Shanghai`。
 
 ```bash
-# 本地：构建镜像并导出
-$ version=0.0.1
-$ docker-compose build
-$ docker save wechat-token-server:$version | gzip > wechat-token-server-$version.tar.gz
-
-# 本地：上传到服务器
-$ scp wechat-token-server-$version.tar.gz user@your-server:/opt/wechat-token-server/
-
-# 服务器：导入镜像，放好 docker-compose.yml 和 .env 后启动
-$ version=0.0.1
-$ cd /opt/wechat-token-server
-$ docker load < wechat-token-server-$version.tar.gz
-$ docker-compose up -d
+$ docker-compose exec wechat-token-server date '+%Y-%m-%d %H:%M:%S %z'
+$ docker-compose exec wechat-token-server node -p 'Intl.DateTimeFormat().resolvedOptions().timeZone'
 ```
 
-> 服务器上先确认 `.env` 已放好再启动，否则挂载点会被自动创建成目录导致启动失败；服务器上不加 `--build`，`docker-compose up -d` 会直接使用已导入的镜像
+更新代码并提交后，重新生成 `image_version`，再执行 `docker-compose up -d --build`；保留旧版本镜像用于回滚。
+
+打包镜像传到服务器（镜像 tag、导出包文件名和服务器上的 `image_version` 使用同一版本）：
+
+在本机项目目录构建镜像，导出包放项目父目录，避免进入下次构建的上下文：
+
+```bash
+$ export image_version="$(TZ=Asia/Shanghai date +%Y%m%d%H%M)-$(git rev-parse --short=7 HEAD)"
+$ docker-compose build
+$ docker save "wechat-token-server:$image_version" | gzip > "../wechat-token-server-$image_version.tar.gz"
+```
+
+仍在本机上传镜像包，首次部署先创建服务器目录：
+
+```bash
+$ ssh user@your-server 'mkdir -p /opt/wechat-token-server'
+$ scp "../wechat-token-server-$image_version.tar.gz" user@your-server:/opt/wechat-token-server/
+```
+
+登录服务器，放好 `docker-compose.yml` 和 `.env` 后导入启动。`image_version` 必须与镜像包文件名中的版本一致，下面的版本仅为示例：
+
+```bash
+$ cd /opt/wechat-token-server
+$ export image_version=202610261530-0123456
+$ docker load < "wechat-token-server-$image_version.tar.gz"
+$ docker-compose up -d --no-build
+```
+
+> 服务器上先确认 `.env` 已放好再启动，否则挂载点会被自动创建成目录导致启动失败；使用 `--no-build` 直接启动已导入的镜像。
+
+每次发布同步服务器上的 `docker-compose.yml`，保留旧版本镜像和导出包。回滚时将 `image_version` 设置为旧版本，再执行 `docker-compose up -d --no-build`。
 
 ### pm2（旧部署方式）
 

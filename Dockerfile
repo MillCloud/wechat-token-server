@@ -16,6 +16,8 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
+RUN apk add --no-cache tzdata
+
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev --legacy-peer-deps --no-audit --no-fund
 

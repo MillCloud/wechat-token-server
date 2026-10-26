@@ -135,7 +135,10 @@ export class TokenService {
       return;
     }
 
-    console.log(new Date().toISOString() + ': Checking access_token');
+    console.log(
+      new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Shanghai' }) +
+        ' +08:00: Checking access_token',
+    );
 
     for (let i = 0; i < this.apps.length; i++) {
       const app = this.apps[i];
@@ -144,8 +147,8 @@ export class TokenService {
       if (!(await this.checkIfValid(accessToken.data.accessToken))) {
         await this.refresh(appId);
         console.log(
-          new Date().toISOString() +
-            ': Token invalid, refreshed, appId: ' +
+          new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Shanghai' }) +
+            ' +08:00: Token invalid, refreshed, appId: ' +
             appId,
         );
       }
